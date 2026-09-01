@@ -6,4 +6,4 @@ target_include_directories(
     ${CMAKE_SOURCE_DIR}/src/Application/Subsystems/Subsystem/include
     ${CMAKE_SOURCE_DIR}/src/Application/Utilities/BitField/include
     ${CMAKE_SOURCE_DIR}/src/Application/Utilities/TimerManager/include
-)
+    )

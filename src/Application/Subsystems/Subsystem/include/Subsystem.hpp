@@ -60,7 +60,7 @@ public:
     /// @brief Запуск подсистемы.
     void startUp()
     {
-        if (subsystemHandle.isStarted) { return; }
+        if (subsystemHandle.isStarted) return;
 
         setBeforeStartUp();
 
@@ -70,7 +70,7 @@ public:
     /// @brief Остановка подсистемы.
     void shutDown()
     {
-        if (!subsystemHandle.isStarted) { return; }
+        if (!subsystemHandle.isStarted) return;
 
         setBeforeShutDown();
 
@@ -86,7 +86,7 @@ public:
     /// @brief Основной процесс.
     int process()
     {
-        if (!subsystemHandle.isStarted) { return 1; }
+        if (!subsystemHandle.isStarted) return 1;
 
         return processBody();
     }

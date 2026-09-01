@@ -135,7 +135,7 @@ void InferenceSubsystem::run()
 
     while (true)
     {
-        if (!body()) { break; }
+        if (!body()) break;
     }
 
     DEBUG("Подсистема", subsystemHandle.name, "остановлена");
@@ -163,12 +163,9 @@ bool InferenceSubsystem::body()
 
     // Запуск таймера для отсчета периода времени с момента запуска потока.
 
-    if (timerManager.isStopped(timerToTimeSinceStartThread))
-    {
-        timerManager.start(timerToTimeSinceStartThread);
-    }
+    START_TIMER_FIRST_TIME(timerManager, timerToTimeSinceStartThread);
 
-    start = timerManager.getElapsedTime(timerToTimeSinceStartThread);
+    GET_ELAPSED_TIME(timerManager, timerToTimeSinceStartThread);
 
     //
 
@@ -180,7 +177,7 @@ bool InferenceSubsystem::body()
 
     if (0)
     {
-        timerManager.getElapsedTime(timerToTimeSinceStartThread);
+        GET_ELAPSED_TIME(timerManager, timerToTimeSinceStartThread);
 
         // Остановка таймера для отсчета периода времени с момента запуска потока.
 
@@ -334,58 +331,65 @@ void InferenceSubsystem::prepareBeforeStartInference(uint8_t options)
 
     // Подготовка провайдера вывода.
 
-    if (prepareProvider(options)) {}
-
-    inferenceContext.sessionOptions->DisablePerSessionThreads();
-
-    // Проверка наличия оптимизированной модели.
-
-    // Получение пути к оптимизированной модели.
-
-    const char* pathToOptimizedModelFile = modelLoader->getPathToOptimizedModelFile();
-
-    assert(pathToOptimizedModelFile);
-
-    if (std::filesystem::exists(pathToOptimizedModelFile))
+    if (prepareProvider(options))
     {
-        // Создание сессии.
+        inferenceContext.sessionOptions->DisablePerSessionThreads();
 
-        inferenceContext.session = std::unique_ptr<Ort::Session>(new Ort::Session(*inferenceContext.env, pathToOptimizedModelFile, *inferenceContext.sessionOptions));
+        // Проверка наличия оптимизированной модели.
+
+        // Получение пути к оптимизированной модели.
+
+        const char* pathToOptimizedModelFile = modelLoader->getPathToOptimizedModelFile();
+
+        assert(pathToOptimizedModelFile);
+
+        if (pathToOptimizedModelFile && std::filesystem::exists(pathToOptimizedModelFile))
+        {
+            // Создание сессии.
+
+            inferenceContext.session = std::unique_ptr<Ort::Session>(new Ort::Session(*inferenceContext.env, pathToOptimizedModelFile, *inferenceContext.sessionOptions));
+        }
+        else
+        {
+            WARNING("Файл оптимизированной модели по пути", modelLoader->getPathToOptimizedModelDirectory(), "отсутствует");
+
+            // Установка уровня оптимизации модели.
+
+            inferenceContext.sessionOptions->SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+
+            DEBUG("Создание сессии...");
+
+            // Установка пути к файлу оптимизированной модели.
+
+            inferenceContext.sessionOptions->SetOptimizedModelFilePath("");
+
+            // Создание сессии.
+
+#ifndef NDEBUG
+            // Получение пути к модели.
+
+            const char* pathToModelFile = modelLoader->getPathToModelFile();
+
+            assert(pathToModelFile);
+
+            DEBUG("Путь к файлу модели:", pathToModelFile);
+
+            inferenceContext.session = std::unique_ptr<Ort::Session>(new Ort::Session(*inferenceContext.env, pathToModelFile, *inferenceContext.sessionOptions));
+#else
+            inferenceContext.session = std::unique_ptr<Ort::Session>(new Ort::Session(*inferenceContext.env, modelLoader->getPathToModelFile(), *inferenceContext.sessionOptions));
+#endif
+        }
     }
     else
     {
-        WARNING("Файл оптимизированной модели по пути", modelLoader->getPathToOptimizedModelDirectory(), "отсутствует");
+        ERROR("Ошибка при подготовке провайдера вывода");
 
-        // Установка уровня оптимизации модели.
-
-        inferenceContext.sessionOptions->SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
-
-        DEBUG("Создание сессии...");
-
-        // Установка пути к файлу оптимизированной модели.
-
-        inferenceContext.sessionOptions->SetOptimizedModelFilePath("");
-
-        // Создание сессии.
-
-#ifndef NDEBUG
-        // Получение пути к модели.
-
-        const char* pathToModelFile = modelLoader->getPathToModelFile();
-
-        assert(pathToModelFile);
-
-        DEBUG("Путь к файлу модели:", pathToModelFile);
-
-        inferenceContext.session = std::unique_ptr<Ort::Session>(new Ort::Session(*inferenceContext.env, pathToModelFile, *inferenceContext.sessionOptions));
-#else
-        inferenceContext.session = std::unique_ptr<Ort::Session>(new Ort::Session(*inferenceContext.env, modelLoader->getPathToModelFile(), *inferenceContext.sessionOptions));
-#endif
+        SET_FLAG(0, isErrorAppeared);
     }
 
     // Создание входных и выходных тензоров.
 
-    if (!createInputOutputTensors())
+    if (!GET_FLAG_STATE(0, isErrorAppeared) && !createInputOutputTensors())
     {
         ERROR("Ошибка при создании входных и выходных тензоров");
 

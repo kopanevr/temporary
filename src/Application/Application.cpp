@@ -117,10 +117,7 @@ int Application::exec()
 
     // Запуск таймера для отсчета периода времени с момента запуска приложения.
 
-    if (timerManager.isStopped(timerToTimeSinceStartApplication))
-    {
-        timerManager.start(timerToTimeSinceStartApplication);
-    }
+    START_TIMER_FIRST_TIME(timerManager, timerToTimeSinceStartApplication);
 
     //
 
@@ -128,13 +125,13 @@ int Application::exec()
 
     //
 
-    timerManager.getElapsedTime(timerToTimeSinceStartApplication);
+    GET_ELAPSED_TIME(timerManager, timerToTimeSinceStartApplication);
 
     // Остановка таймера для отсчета периода времени с момента запуска приложения.
 
     timerManager.stop(timerToTimeSinceStartApplication);
 
-    if (ret == 1) { return EXIT_FAILURE; }
+    if (ret == 1) return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
 }

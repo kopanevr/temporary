@@ -113,3 +113,11 @@ public:
         return std::chrono::steady_clock::now() - timer.start;
     }
 };
+
+#define START_TIMER_FIRST_TIME(timerManager, timer) \
+    if (timerManager.isStopped(timer)) \
+    { \
+        timerManager.start(timer); \
+    }
+
+#define GET_ELAPSED_TIME(timerManager, timer) timerManager.getElapsedTime(timer)

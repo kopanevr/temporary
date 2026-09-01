@@ -2,7 +2,7 @@ add_library(
     InferenceSubsystem SHARED
     src/InferenceSubsystem.cpp
     src/ModelLoader.cpp
-)
+    )
 
 target_include_directories(
     InferenceSubsystem PUBLIC
@@ -12,7 +12,7 @@ target_include_directories(
     ${CMAKE_SOURCE_DIR}/src/Application/Subsystems/Logger/include
     ${CMAKE_SOURCE_DIR}/src/Application/Utilities/BitField/include
     ${CMAKE_SOURCE_DIR}/src/Application/Utilities/TimerManager/include
-)
+    )
 
 target_link_libraries(InferenceSubsystem PUBLIC Logger)
 

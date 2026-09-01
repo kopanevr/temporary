@@ -1,7 +1,5 @@
 #pragma once
 
-#include <condition_variable>
-
 /// @brief
 struct ApplicationContext final
 {
