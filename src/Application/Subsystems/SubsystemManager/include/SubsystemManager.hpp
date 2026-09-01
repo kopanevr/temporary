@@ -124,10 +124,7 @@ public:
     {
         for (const auto& item : subsystems)
         {
-            if (item->getId() == id)
-            {
-                return item;
-            }
+            if (item->getId() == id) return item;
         }
 
         return nullptr;

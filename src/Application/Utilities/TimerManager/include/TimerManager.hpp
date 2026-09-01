@@ -120,4 +120,6 @@ public:
         timerManager.start(timer); \
     }
 
+#define STOP_TIMER(timerManager, timer) timerManager.stop(timer)
+
 #define GET_ELAPSED_TIME(timerManager, timer) timerManager.getElapsedTime(timer)

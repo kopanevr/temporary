@@ -13,11 +13,8 @@ target_include_directories(
     Application PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationConfig/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationContext/include
-
     ${CMAKE_CURRENT_SOURCE_DIR}/CommandLineInterpreter/include
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/TimerManager/include
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Subsystems/Subsystem/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Subsystems/InferenceSubsystem/include
     )

@@ -129,7 +129,7 @@ int Application::exec()
 
     // Остановка таймера для отсчета периода времени с момента запуска приложения.
 
-    timerManager.stop(timerToTimeSinceStartApplication);
+    STOP_TIMER(timerManager, timerToTimeSinceStartApplication);
 
     if (ret == 1) return EXIT_FAILURE;
 
