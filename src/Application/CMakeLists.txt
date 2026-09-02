@@ -25,6 +25,8 @@ target_link_libraries(
     SubsystemManager
     )
 
+target_compile_options(Application PRIVATE -fno-exception)
+
 add_custom_command(
     TARGET Application
     POST_BUILD

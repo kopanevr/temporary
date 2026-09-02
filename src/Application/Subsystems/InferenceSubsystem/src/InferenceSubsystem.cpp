@@ -333,6 +333,12 @@ void InferenceSubsystem::prepareBeforeStartInference(uint8_t options)
 
     if (prepareProvider(options))
     {
+#if (0)
+        // Включение профилирования.
+
+        inferenceContext.sessionOptions->EnableProfiling("");
+#endif
+
         inferenceContext.sessionOptions->DisablePerSessionThreads();
 
         // Проверка наличия оптимизированной модели.

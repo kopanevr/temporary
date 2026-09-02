@@ -21,9 +21,18 @@
 /// @param argv Указатель на список аргументов.
 Application::Application(int argc, char* argv[])
 {
-    commandLineInterpreter = std::unique_ptr<CommandLineInterpreter>(new CommandLineInterpreter(argc, argv));
+    commandLineInterpreter.reset(new(std::nothrow) CommandLineInterpreter(argc, argv));
 
-    CommandLineInterpreter::instance = commandLineInterpreter.get();
+    assert(commandLineInterpreter != nullptr);
+
+    if (commandLineInterpreter != nullptr)
+    {
+        CommandLineInterpreter::instance = commandLineInterpreter.get();
+
+        RESET_FLAG(9, isAllowedToExecute);
+
+        return;
+    }
 
     // Проверка состояния обработки аргументов.
 
@@ -34,9 +43,18 @@ Application::Application(int argc, char* argv[])
         return;
     }
 
-    subsystemManager = std::unique_ptr<SubsystemManager>(new SubsystemManager());
+    subsystemManager.reset(new(std::nothrow) SubsystemManager());
 
-    SubsystemManager::instance = subsystemManager.get();
+    assert(subsystemManager != nullptr);
+
+    if (subsystemManager != nullptr)
+    {
+        SubsystemManager::instance = subsystemManager.get();
+
+        RESET_FLAG(9, isAllowedToExecute);
+
+        return;
+    }
 
     //
 
@@ -101,7 +119,7 @@ void Application::init()
 
     if (subsystemManager)
     {
-        subsystemManager->startUp();
+        subsystemManager-> startUp();
     }
 }
 
